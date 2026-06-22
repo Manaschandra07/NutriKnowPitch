@@ -38,10 +38,33 @@
   <style>
     body { background-color: #000; color: #e2f0f5; }
     
-    @keyframes pulse-glow { 
-      0%, 100% { opacity: 0.15; transform: scale(1); } 
-      50% { opacity: 0.25; transform: scale(1.05); } 
+    /* Subtle Drifting Orbs */
+    @keyframes drift { 
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.15; } 
+      33% { transform: translate(5vw, -5vh) scale(1.1); opacity: 0.25; } 
+      66% { transform: translate(-5vw, 5vh) scale(0.95); opacity: 0.2; } 
     }
+    .glow-bg { animation: drift 15s ease-in-out infinite; }
+
+    /* Animated Cyber Grid Background */
+    @keyframes gridMove {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(40px); }
+    }
+    .bg-grid {
+      position: fixed;
+      inset: -100px; /* Oversized to prevent edges showing during movement */
+      z-index: -20;
+      pointer-events: none;
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(0, 245, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 245, 255, 0.05) 1px, transparent 1px);
+      -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 10%, transparent 80%);
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 10%, transparent 80%);
+      animation: gridMove 10s linear infinite;
+    }
+
     @keyframes float { 
       0%, 100% { transform: translateY(0); } 
       50% { transform: translateY(-8px); } 
@@ -56,7 +79,34 @@
       from { stroke-dashoffset: 600; }
     }
     
-    .glow-bg { animation: pulse-glow 6s ease-in-out infinite; }
+    /* Modern UI Animations */
+    @keyframes text-shine {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+    .animate-text-shine {
+      background-size: 200% auto !important;
+      animation: text-shine 3s linear infinite;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-up {
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .floating { animation: float 5s ease-in-out infinite; }
     .scanner-line { animation: scanline 2.5s ease-in-out infinite; }
     .animate-arc { animation: drawArc 2s cubic-bezier(0.34, 1.2, 0.64, 1) forwards; }
@@ -65,10 +115,13 @@
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(12px);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .glass-card:hover {
       background: rgba(255, 255, 255, 0.05);
       border-color: rgba(0, 245, 255, 0.3);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 15px 35px -10px rgba(0, 245, 255, 0.25);
     }
 
     /* Custom Scrollbar for Modal */
@@ -82,16 +135,30 @@
 </head>
 <body class="min-h-screen font-sans antialiased selection:bg-app-cyan selection:text-black overflow-x-hidden relative">
 
+  <!-- Animated Cyber Grid -->
+  <div class="bg-grid"></div>
+
+  <!-- Drifting Orbs -->
   <div class="fixed top-[-20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-app-cyan blur-[150px] glow-bg pointer-events-none -z-10"></div>
   <div class="fixed bottom-[-20%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-app-violet blur-[150px] glow-bg pointer-events-none -z-10" style="animation-delay: -3s;"></div>
 
   <nav class="fixed top-0 w-full z-50 bg-black/60 backdrop-blur-xl border-b border-white/10">
     <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-app-cyan flex items-center justify-center text-black shadow-[0_0_15px_rgba(0,245,255,0.4)]">
-          <i data-lucide="scan-line" class="w-6 h-6"></i>
+        
+        <div class="w-10 h-10 rounded-xl bg-black/80 border border-white/10 flex items-center justify-center shadow-[0_0_15px_rgba(0,255,136,0.3)]">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#nk-gradient-nav)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+            <defs>
+              <linearGradient id="nk-gradient-nav" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00F5FF" />
+                <stop offset="100%" stop-color="#00FF88" />
+              </linearGradient>
+            </defs>
+            <path d="M4 19V5l7 14V5 M14 5v14 M20 10l-6 5.5l6 3.5"/>
+          </svg>
         </div>
-        <span class="font-black text-2xl tracking-tighter text-white">NutriKnow</span>
+
+        <span class="font-black text-2xl tracking-tighter pr-1 animate-text-shine" style="background: linear-gradient(135deg, #00F5FF 0%, #00FF88 55%, #00F5FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">NutriKnow</span>
       </div>
       
       <div class="flex items-center gap-6">
@@ -102,7 +169,7 @@
           <a href="#business-model" class="text-xs font-mono text-slate-400 hover:text-app-cyan transition-colors">◈ BUSINESS</a>
           <a href="#vision" class="text-xs font-mono text-slate-400 hover:text-app-cyan transition-colors">◈ VISION</a>
         </div>
-        <a href="https://nutriknow-orcin.vercel.app/" target="_blank" class="px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-app-cyan font-bold rounded-full transition-all flex items-center gap-2 whitespace-nowrap">
+        <a href="https://nutriknow-orcin.vercel.app/" target="_blank" class="px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-app-cyan font-bold rounded-full transition-all flex items-center gap-2 whitespace-nowrap hover:shadow-[0_0_15px_rgba(0,245,255,0.4)]">
           Launch App <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
         </a>
       </div>
@@ -110,70 +177,66 @@
   </nav>
 
   <section class="pt-40 pb-24 px-6 max-w-5xl mx-auto flex flex-col items-center text-center">
-    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-app-cyan/30 bg-app-cyan/10 text-app-cyan font-mono text-xs tracking-widest mb-8">
+    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-app-cyan/30 bg-app-cyan/10 text-app-cyan font-mono text-xs tracking-widest mb-8 animate-fade-up" style="opacity: 0; animation-delay: 0.1s;">
       <div class="w-2 h-2 rounded-full bg-app-cyan animate-pulse"></div>
       THE TRUTH BEHIND THE BARCODE
     </div>
     
-    <h1 class="text-5xl md:text-7xl font-black text-white leading-tight tracking-tighter mb-8">
-      Taking the guesswork out of <br />
-      <span class="text-transparent bg-clip-text bg-gradient-to-r from-app-cyan to-app-green">grocery shopping.</span>
+    <h1 class="text-5xl md:text-7xl font-black leading-tight tracking-tighter mb-8 animate-fade-up text-transparent bg-clip-text bg-gradient-to-r from-app-cyan to-app-green animate-text-shine pb-4 px-2" style="opacity: 0; animation-delay: 0.2s;">
+      Taking the guesswork out of grocery shopping.
     </h1>
     
-    <p class="text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed mb-12">
+    <p class="text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed mb-12 animate-fade-up" style="opacity: 0; animation-delay: 0.3s;">
       Imagine having a highly intelligent, personal assistant in your pocket that instantly analyzes everything you are about to eat. NutriKnow cuts through deceptive food marketing to make getting fit effortless.
     </p>
 
-    <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-      <a href="https://nutriknow-orcin.vercel.app/" target="_blank" class="px-8 py-4 bg-app-cyan hover:bg-[#00e0eb] text-black font-bold text-lg rounded-xl flex items-center justify-center gap-3 transition-transform hover:-translate-y-1 shadow-[0_0_30px_rgba(0,245,255,0.25)]">
-        <i data-lucide="scan" class="w-5 h-5"></i> Try The Scanner
-      </a>
-      <button onclick="openDetailsModal()" class="px-8 py-4 glass-card text-white font-bold text-lg rounded-xl flex items-center justify-center gap-3 transition-colors cursor-pointer">
-        <i data-lucide="book-open" class="w-5 h-5"></i> Architecture & Docs
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto animate-fade-up" style="opacity: 0; animation-delay: 0.4s;">
+      <button onclick="openDetailsModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-10 py-5 bg-white text-black font-bold text-lg rounded-2xl hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.2)] cursor-pointer">
+        <i data-lucide="book-open" class="w-5 h-5"></i> Architecture
       </button>
     </div>
   </section>
 
   <section id="problem" class="py-24 px-6 relative border-t border-white/5 bg-app-bg2/50">
     <div class="max-w-7xl mx-auto">
-      <div class="mb-16">
+      <div class="mb-16 reveal">
         <h2 class="text-xs font-mono text-app-red tracking-[0.2em] mb-4">01. THE PROBLEM</h2>
         <h3 class="text-3xl md:text-4xl font-bold text-white max-w-3xl leading-tight">
-          Getting fit is a global goal, but the food industry has rigged the game against you.
+          Getting fit is hard, mostly because the food industry makes it tricky.
         </h3>
         <p class="mt-6 text-lg text-slate-400 max-w-3xl">
-          Supermarket aisles are filled with products claiming to be "all-natural" or "sugar-free," but the reality is much darker. The modern food ecosystem is engineered to confuse consumers and hide cheap, inflammatory ingredients.
+          Supermarkets are filled with products claiming to be "all-natural" or "sugar-free," but the reality is much darker. The modern food ecosystem is engineered to confuse consumers and hide cheap, inflammatory ingredients.
         </p>
       </div>
 
       <div class="grid lg:grid-cols-3 gap-6">
-        <div class="glass-card p-10 rounded-3xl relative overflow-hidden group">
-          <div class="w-12 h-12 bg-white/5 text-white rounded-xl flex items-center justify-center mb-6">
+        <div class="glass-card p-10 rounded-3xl relative overflow-hidden group reveal">
+          <div class="w-12 h-12 bg-white/5 text-white rounded-xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110">
             <i data-lucide="clock" class="w-6 h-6"></i>
           </div>
           <h4 class="text-2xl font-bold text-white mb-4">Time & Friction</h4>
           <p class="text-slate-400 leading-relaxed text-md">
-            People are busy, and deciphering modern nutrition labels practically requires a chemistry degree. Constantly analyzing INS numbers and complex ingredients drains energy. Because of this friction, <strong class="text-white">human laziness usually wins out</strong>.
+            People are busy, and reading food labels is confusing. Trying to understand complex ingredients takes too much effort. Because of this, we often just grab the easiest option.
           </p>
         </div>
 
-        <div class="glass-card p-10 rounded-3xl relative overflow-hidden group">
-          <div class="w-12 h-12 bg-app-amber/10 text-app-amber rounded-xl flex items-center justify-center mb-6">
+        <div class="glass-card p-10 rounded-3xl relative overflow-hidden group reveal">
+          <div class="w-12 h-12 bg-app-amber/10 text-app-amber rounded-xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110">
             <i data-lucide="shield-alert" class="w-6 h-6"></i>
           </div>
-          <h4 class="text-2xl font-bold text-white mb-4">Regulatory Loopholes</h4>
+          <h4 class="text-2xl font-bold text-white mb-4">Legal Tricks</h4>
           <p class="text-slate-400 leading-relaxed text-md">
-            Food companies exploit information asymmetry. A label boasting "Zero Sugar" legally hides highly processed <strong class="text-white">Maltodextrin</strong>—an additive that spikes blood glucose faster than table sugar. Consumers are fundamentally deceived by legal "greenwashing."
+            Food companies trick us legally. A label saying "Zero Sugar" might hide ingredients like Maltodextrin, which acts just like sugar in your body. It looks healthy, but it's not.
           </p>
         </div>
 
-        <div class="glass-card p-10 rounded-3xl relative overflow-hidden group">
-          <div class="w-12 h-12 bg-app-red/10 text-app-red rounded-xl flex items-center justify-center mb-6">
+        <div class="glass-card p-10 rounded-3xl relative overflow-hidden group reveal">
+          <div class="w-12 h-12 bg-app-red/10 text-app-red rounded-xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110">
             <i data-lucide="activity-square" class="w-6 h-6"></i>
           </div>
-          <h4 class="text-2xl font-bold text-white mb-4">The Metabolic Toll</h4>
+          <h4 class="text-2xl font-bold text-white mb-4">The Health Cost</h4>
           <p class="text-slate-400 leading-relaxed text-md">
-            The reliance on ultra-processed foods (UPFs) loaded with inflammatory seed oils (Palm, Vanaspati) and synthetic dyes creates a <strong class="text-white">cocktail effect</strong>. We blindly ingest ingredients directly linked to long-term metabolic dysfunction because the packaging looks "healthy."
+            Eating highly processed foods with bad oils and fake colors adds up. We eat these harmful ingredients every day without realizing it, simply because the packaging makes it look safe.
           </p>
         </div>
       </div>
@@ -182,14 +245,14 @@
 
   <section id="solution" class="py-24 px-6 relative border-t border-white/5">
     <div class="max-w-6xl mx-auto">
-      <div class="mb-16 text-center">
+      <div class="mb-16 text-center reveal">
         <h2 class="text-xs font-mono text-app-green tracking-[0.2em] mb-4">02. THE SOLUTION</h2>
         <h3 class="text-4xl md:text-5xl font-black text-white">Absolute transparency.<br/>Zero friction.</h3>
       </div>
 
       <div class="grid lg:grid-cols-3 gap-8">
-        <div class="glass-card p-8 rounded-3xl flex flex-col items-center text-center hover:border-app-cyan/50 transition-colors">
-          <div class="w-16 h-16 rounded-full bg-app-cyan/10 border border-app-cyan/30 flex items-center justify-center text-app-cyan mb-6 relative">
+        <div class="glass-card p-8 rounded-3xl flex flex-col items-center text-center relative overflow-hidden reveal">
+          <div class="w-16 h-16 rounded-full bg-app-cyan/10 border border-app-cyan/30 flex items-center justify-center text-app-cyan mb-6 relative overflow-hidden">
             <i data-lucide="smartphone" class="w-8 h-8"></i>
             <div class="absolute inset-0 border-t-2 border-app-cyan rounded-full scanner-line"></div>
           </div>
@@ -197,14 +260,14 @@
           <p class="text-slate-400">Open the web app, point the camera at a barcode, and get an instant, intelligent result.</p>
         </div>
 
-        <div class="glass-card p-8 rounded-3xl flex flex-col items-center text-center lg:scale-105 border-app-green/30 bg-app-green/5 relative overflow-hidden">
+        <div class="glass-card p-8 rounded-3xl flex flex-col items-center text-center relative overflow-hidden reveal">
           <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="activity" class="w-24 h-24"></i></div>
-          <div class="font-mono text-5xl font-black text-app-green mb-6 mt-4">1-100</div>
+          <div class="font-mono text-5xl font-black text-app-green mb-6 mt-4 drop-shadow-[0_0_15px_rgba(0,255,136,0.3)]">1-100</div>
           <h4 class="text-xl font-bold text-white mb-3">The Nutri-Score</h4>
-          <p class="text-slate-400">A proprietary algorithm calculates a simple, single number based on macronutrients, processing levels, additives, and hidden sugars.</p>
+          <p class="text-slate-400">Our system gives the food a simple score based on its nutrients, how processed it is, and hidden sugars.</p>
         </div>
 
-        <div class="glass-card p-8 rounded-3xl flex flex-col items-center text-center hover:border-app-cyan/50 transition-colors">
+        <div class="glass-card p-8 rounded-3xl flex flex-col items-center text-center relative overflow-hidden reveal">
           <div class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white mb-6">
             <i data-lucide="file-text" class="w-8 h-8"></i>
           </div>
@@ -213,16 +276,16 @@
         </div>
       </div>
 
-      <div class="mt-12 flex flex-col md:flex-row gap-4 justify-center">
-        <div class="flex items-center gap-3 px-6 py-4 rounded-xl border border-app-green/20 bg-app-green/10">
+      <div class="mt-12 flex flex-col md:flex-row gap-4 justify-center reveal">
+        <div class="flex items-center gap-3 px-6 py-4 rounded-xl border border-app-green/20 bg-app-green/10 transition-colors hover:bg-app-green/20">
           <div class="font-mono font-bold text-app-green text-xl">90-100</div>
           <div class="text-sm text-slate-300">Excellent. Eat freely.</div>
         </div>
-        <div class="flex items-center gap-3 px-6 py-4 rounded-xl border border-app-amber/20 bg-app-amber/10">
+        <div class="flex items-center gap-3 px-6 py-4 rounded-xl border border-app-amber/20 bg-app-amber/10 transition-colors hover:bg-app-amber/20">
           <div class="font-mono font-bold text-app-amber text-xl">50-89</div>
           <div class="text-sm text-slate-300">Moderate. Consume with awareness.</div>
         </div>
-        <div class="flex items-center gap-3 px-6 py-4 rounded-xl border border-app-red/20 bg-app-red/10">
+        <div class="flex items-center gap-3 px-6 py-4 rounded-xl border border-app-red/20 bg-app-red/10 transition-colors hover:bg-app-red/20">
           <div class="font-mono font-bold text-app-red text-xl">1-49</div>
           <div class="text-sm text-slate-300">Toxic. Put it back on the shelf.</div>
         </div>
@@ -230,8 +293,8 @@
     </div>
   </section>
 
-  <section id="why-it-works" class="py-20 px-6">
-    <div class="max-w-5xl mx-auto rounded-3xl p-[1px] bg-gradient-to-r from-app-cyan via-app-violet to-app-cyan">
+  <section id="why-it-works" class="py-20 px-6 scroll-mt-[20vh]">
+    <div class="max-w-5xl mx-auto rounded-3xl p-[1px] bg-gradient-to-r from-app-cyan via-app-violet to-app-cyan reveal">
       <div class="bg-black rounded-[23px] p-10 md:p-16 flex flex-col md:flex-row gap-10 items-center">
         <div class="flex-1">
           <h2 class="text-xs font-mono text-app-violet tracking-[0.2em] mb-4">03. WHY IT WORKS</h2>
@@ -270,7 +333,7 @@
 
   <section id="business-model" class="py-24 px-6 relative border-t border-white/5 bg-app-bg2/50">
     <div class="max-w-6xl mx-auto">
-      <div class="mb-16">
+      <div class="mb-16 reveal">
         <h2 class="text-xs font-mono text-app-amber tracking-[0.2em] mb-4">04. THE BUSINESS MODEL</h2>
         <h3 class="text-3xl md:text-4xl font-bold text-white mb-6">How We Scale & Earn</h3>
         <p class="text-lg text-slate-400 max-w-3xl">
@@ -279,7 +342,7 @@
       </div>
 
       <div class="grid md:grid-cols-3 gap-6">
-        <div class="glass-card p-8 rounded-2xl">
+        <div class="glass-card p-8 rounded-2xl reveal">
           <div class="flex items-center gap-4 mb-6">
             <i data-lucide="unlock" class="w-6 h-6 text-app-cyan"></i>
             <h4 class="text-xl font-bold text-white">The Freemium Model</h4>
@@ -289,7 +352,7 @@
           </p>
         </div>
 
-        <div class="glass-card p-8 rounded-2xl">
+        <div class="glass-card p-8 rounded-2xl reveal">
           <div class="flex items-center gap-4 mb-6">
             <i data-lucide="shopping-cart" class="w-6 h-6 text-app-green"></i>
             <h4 class="text-xl font-bold text-white">Smart Alternatives</h4>
@@ -299,13 +362,13 @@
           </p>
         </div>
 
-        <div class="glass-card p-8 rounded-2xl">
+        <div class="glass-card p-8 rounded-2xl reveal">
           <div class="flex items-center gap-4 mb-6">
             <i data-lucide="bar-chart-2" class="w-6 h-6 text-app-violet"></i>
             <h4 class="text-xl font-bold text-white">Data Analytics</h4>
           </div>
           <p class="text-slate-400 leading-relaxed">
-            As the user base grows, we sit on aggregated consumer data regarding what people are scanning and rejecting—incredibly valuable to <strong class="text-white">emerging health-food brands</strong> looking for insights.
+            As more people use the app, we gather helpful data on what foods people choose and what they avoid. This is very useful information for new health-food brands.
           </p>
         </div>
       </div>
@@ -314,7 +377,7 @@
 
   <section id="vision" class="py-32 px-6 border-t border-white/5 relative overflow-hidden">
     <div class="absolute inset-0 bg-gradient-to-b from-transparent to-app-cyan/10"></div>
-    <div class="max-w-5xl mx-auto text-center relative z-10">
+    <div class="max-w-5xl mx-auto text-center relative z-10 reveal">
       <h2 class="text-xs font-mono text-app-cyan tracking-[0.2em] mb-6">05. THE VISION</h2>
       <h3 class="text-4xl md:text-5xl font-black text-white mb-8 leading-tight">
         From a simple scanner to a comprehensive health ecosystem.
@@ -335,23 +398,41 @@
       
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
         <a href="https://nutriknow-orcin.vercel.app/" target="_blank" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-10 py-5 bg-white text-black font-bold text-lg rounded-2xl hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.2)]">
-          Launch NutriKnow Scanner <i data-lucide="arrow-right" class="w-5 h-5"></i>
+          Launch NutriKnow <i data-lucide="arrow-right" class="w-5 h-5"></i>
         </a>
-        <button onclick="openDetailsModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-10 py-5 bg-transparent border border-white/20 text-white font-bold text-lg rounded-2xl hover:bg-white/5 transition-colors cursor-pointer">
+        <button onclick="openDetailsModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-10 py-5 bg-white text-black font-bold text-lg rounded-2xl hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.2)] cursor-pointer">
           Know more about NutriKnow <i data-lucide="book-open" class="w-5 h-5"></i>
         </button>
       </div>
     </div>
   </section>
 
-  <footer class="py-10 border-t border-white/10 bg-black text-center text-slate-500 font-mono text-sm">
-    <div class="flex justify-center items-center gap-2 mb-4">
-      <i data-lucide="scan-line" class="w-5 h-5 text-app-cyan"></i>
-      <span class="text-white font-bold tracking-widest uppercase">NutriKnow</span>
+  <footer class="py-10 border-t border-white/10 bg-black text-center text-slate-500 font-mono text-sm relative">
+    <div class="flex justify-center items-center gap-3 mb-4">
+      
+      <div class="w-10 h-10 rounded-xl bg-black/80 border border-white/10 flex items-center justify-center shadow-[0_0_15px_rgba(0,255,136,0.3)] hover:scale-105 transition-transform cursor-pointer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="url(#nk-gradient-footer)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+          <defs>
+            <linearGradient id="nk-gradient-footer" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00F5FF" />
+              <stop offset="100%" stop-color="#00FF88" />
+            </linearGradient>
+          </defs>
+          <path d="M4 19V5l7 14V5 M14 5v14 M20 10l-6 5.5l6 3.5"/>
+        </svg>
+      </div>
+
+      <span class="font-black text-2xl tracking-tighter pr-1 animate-text-shine" style="background: linear-gradient(135deg, #00F5FF 0%, #00FF88 55%, #00F5FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">NutriKnow</span>
     </div>
     <p class="mb-2">Built for a transparent food system. Engineered with purpose.</p>
-    <p class="opacity-50">© <span id="year"></span> All rights reserved.</p>
+    <p class="mb-4 opacity-50">© <span id="year"></span> All rights reserved.</p>
+    <p class="mt-2 text-slate-400">Contact: manaschandra0710@gmail.com</p>
   </footer>
+
+  <!-- Scroll to Top Button -->
+  <button id="scrollToTopBtn" onclick="scrollToTop()" class="fixed bottom-8 right-8 z-40 p-4 glass-card text-app-cyan rounded-full shadow-[0_0_15px_rgba(0,245,255,0.2)] opacity-0 pointer-events-none transition-all duration-300 hover:bg-white/5 hover:border-app-cyan/50 hover:scale-110 group cursor-pointer">
+    <i data-lucide="arrow-up" class="w-6 h-6 group-hover:-translate-y-1 transition-transform"></i>
+  </button>
 
   <div id="details-modal" class="fixed inset-0 z-[100] hidden flex-col bg-black/95 backdrop-blur-2xl overflow-y-auto opacity-0 transition-opacity duration-300">
     
@@ -366,88 +447,37 @@
     </div>
 
     <div class="max-w-4xl mx-auto px-6 py-12 text-slate-300 w-full">
-      <h2 class="text-4xl md:text-5xl font-black text-white mb-6">Under the Hood</h2>
       <p class="text-lg text-slate-400 leading-relaxed mb-12">
-        NutriKnow is engineered as a seamless, client-side heavy React application. It utilizes modern Web APIs for hardware access, proprietary string-matching arrays for ingredient decryption, and connects to a backend AI engine to parse complex label imagery. Here is the technical breakdown of how data flows from the user to the backend.
+        NutriKnow is a fast, easy-to-use application. It uses your camera to identify products, searches databases to understand the ingredients, and does the hard work of figuring out if a food is good for you. Here is exactly how it works from the moment you scan an item:
       </p>
 
-      <div class="mb-12">
-        <h3 class="text-xs font-mono text-app-violet tracking-[0.2em] mb-4">PART 1: THE USER EXPERIENCE</h3>
-        <h4 class="text-2xl font-bold text-white mb-6">How to Use NutriKnow</h4>
-        
-        <div class="space-y-6">
-          <div class="glass-card p-6 rounded-2xl border-l-2 border-app-cyan">
-            <h5 class="text-lg font-bold text-white mb-2">1. Data Input (The Scan)</h5>
-            <p class="text-slate-400 text-sm leading-relaxed mb-3">NutriKnow is designed to be completely frictionless. Users are presented with three input methods:</p>
-            <ul class="list-disc list-inside text-sm text-slate-400 space-y-1 ml-2">
-              <li><strong class="text-white">Live Camera Scan:</strong> The user points their smartphone camera at the product's barcode. The app instantly recognizes the format.</li>
-              <li><strong class="text-white">Manual Entry:</strong> Users can manually type the 8 or 13-digit barcode.</li>
-              <li><strong class="text-white">Label OCR (Image Upload):</strong> If the product isn't in any database, the user snaps a photo of the ingredient list and nutrition panel.</li>
-            </ul>
-          </div>
-
-          <div class="glass-card p-6 rounded-2xl border-l-2 border-app-cyan">
-            <h5 class="text-lg font-bold text-white mb-2">2. Data Verification</h5>
-            <p class="text-slate-400 text-sm leading-relaxed">If the user uploads an image, the app's AI extracts the text. Before analysis, the user is shown a "Verification Screen" where they can review and correct any numbers the AI might have misread, ensuring 100% accuracy.</p>
-          </div>
-
-          <div class="glass-card p-6 rounded-2xl border-l-2 border-app-cyan">
-            <h5 class="text-lg font-bold text-white mb-2">3. The Intelligence Dashboard</h5>
-            <p class="text-slate-400 text-sm leading-relaxed mb-3">Once data is fetched, the core analysis is presented via several modular UI components:</p>
-            <ul class="list-disc list-inside text-sm text-slate-400 space-y-1 ml-2">
-              <li><strong class="text-white">The Arc Dial:</strong> A visual "Nutri-Score" out of 100, encircled by rings for Fiber, Fat, and Sugar.</li>
-              <li><strong class="text-white">How They Are Fooling You:</strong> Flags "Greenwashing" (e.g., claiming "Multigrain" when fiber is &lt; 3g).</li>
-              <li><strong class="text-white">Ingredient Decryption Engine:</strong> Translates chemical names into English, highlighting hidden sugar aliases in red.</li>
-              <li><strong class="text-white">Nutritional Karma Ledger:</strong> Total transparency into how the score was calculated (points deducted for sodium, added for protein).</li>
-              <li><strong class="text-white">Ancient Wisdom Swaps:</strong> Suggests healthier, traditional alternatives based on Ayurveda and modern science.</li>
-            </ul>
-          </div>
+      <div class="space-y-6">
+        <div class="glass-card p-6 rounded-2xl border-l-2 border-app-cyan">
+          <h5 class="text-xl font-bold text-white mb-2 flex items-center gap-2"><i data-lucide="smartphone" class="w-5 h-5 text-app-cyan"></i> 1. The Scan</h5>
+          <p class="text-slate-400 text-base leading-relaxed">
+            You point your camera at the product's barcode. The application instantly reads the numbers using your phone's built-in tools.
+          </p>
         </div>
-      </div>
 
-      <div>
-        <h3 class="text-xs font-mono text-app-amber tracking-[0.2em] mb-4">PART 2: TECHNICAL ARCHITECTURE</h3>
-        <h4 class="text-2xl font-bold text-white mb-6">Under the Hood</h4>
+        <div class="glass-card p-6 rounded-2xl border-l-2 border-app-cyan">
+          <h5 class="text-xl font-bold text-white mb-2 flex items-center gap-2"><i data-lucide="database" class="w-5 h-5 text-app-cyan"></i> 2. Fetching the Data</h5>
+          <p class="text-slate-400 text-base leading-relaxed">
+            Once it reads the barcode, the app connects to the Open Food Facts database. It searches for that specific barcode and downloads the product's raw nutrition facts and ingredient list.
+          </p>
+        </div>
 
-        <div class="space-y-6">
-          <div class="glass-card p-6 rounded-2xl">
-            <h5 class="text-lg font-bold text-white mb-2 flex items-center gap-2"><i data-lucide="database" class="w-4 h-4 text-app-amber"></i> 1. Data Ingestion & API Routing</h5>
-            <ul class="list-disc list-inside text-sm text-slate-400 space-y-3 ml-2">
-              <li><strong class="text-white">Barcode Detection:</strong> Utilizes the native <code class="font-mono text-app-amber bg-app-amber/10 px-1 rounded">window.BarcodeDetector</code> Web API for hardware-accelerated scanning directly through the browser.</li>
-              <li><strong class="text-white">Open Food Facts Integration:</strong> Pings the open-source Open Food Facts API. The app includes a dedicated normalization function to clean irregular JSON data, standardizing macros to strict "per 100g" formats.</li>
-              <li><strong class="text-white">Vision AI Pipeline:</strong> For image uploads, images are converted to Base64 and routed securely to an internal endpoint. This endpoint communicates with a multimodal LLM (Claude Sonnet 4.6), strictly prompted to return clean JSON overriding markdown.</li>
-            </ul>
-          </div>
+        <div class="glass-card p-6 rounded-2xl border-l-2 border-app-cyan">
+          <h5 class="text-xl font-bold text-white mb-2 flex items-center gap-2"><i data-lucide="cpu" class="w-5 h-5 text-app-cyan"></i> 3. The Intelligence Engine</h5>
+          <p class="text-slate-400 text-base leading-relaxed">
+            This is where the magic happens. Our system looks closely at the ingredients to spot hidden sugars, bad oils, or harmful chemicals. It adds points for healthy things like protein and fiber, and takes points away for bad additives or processed ingredients.
+          </p>
+        </div>
 
-          <div class="glass-card p-6 rounded-2xl">
-            <h5 class="text-lg font-bold text-white mb-2 flex items-center gap-2"><i data-lucide="search" class="w-4 h-4 text-app-amber"></i> 2. The Decryption Engine</h5>
-            <p class="text-slate-400 text-sm leading-relaxed mb-3">Ingredient arrays run through proprietary databases sorted "longest-name-first" to ensure exact substring matching without duplication:</p>
-            <ul class="list-disc list-inside text-sm text-slate-400 space-y-1 ml-2">
-              <li><strong class="text-white">Sugar & Oil DBs:</strong> Cross-references against lists of covert ingredients (e.g., Maltodextrin, Vanaspati).</li>
-              <li><strong class="text-white">Additive Regex:</strong> Uses Regex <code class="font-mono text-app-amber bg-app-amber/10 px-1 rounded">/INS\s*\d+|E\d{3,4}/i</code> to flag artificial colorings and emulsifiers instantly.</li>
-              <li><strong class="text-white">Greenwashing Algorithm:</strong> Compares marketing claims against actual macros (e.g., claiming "Sugar Free" while <code class="font-mono text-app-amber bg-app-amber/10 px-1 rounded">addedSugar > 0.5g</code> triggers a flag).</li>
-            </ul>
-          </div>
-
-          <div class="glass-card p-6 rounded-2xl">
-            <h5 class="text-lg font-bold text-white mb-2 flex items-center gap-2"><i data-lucide="calculator" class="w-4 h-4 text-app-green"></i> 3. Bounded Scoring Algorithm</h5>
-            <p class="text-slate-400 text-sm leading-relaxed mb-4">The core IP calculates the score using a strictly controlled mathematical formula where every variable is hard-capped to prevent skewed data:</p>
-            <div class="bg-black/80 p-4 rounded-xl border border-white/10 font-mono text-sm text-app-cyan shadow-inner mb-4 inline-block">
-              Score = max(10, min(100, 100 - Penalties + Bonuses))
-            </div>
-            <ul class="list-disc list-inside text-sm text-slate-400 space-y-1 ml-2">
-              <li><strong class="text-app-red">Penalties:</strong> Added sugars (capped at 30 pts), bad oils (capped at 25), sodium (capped at 15), additives (capped at 20).</li>
-              <li><strong class="text-app-green">Bonuses:</strong> Dietary fiber (capped at 10 pts), protein (capped at 10), Ancient Wisdom ingredients (capped at 15).</li>
-            </ul>
-            <p class="text-slate-500 text-xs mt-4 italic">Because the algorithm calculates exact integers for penalties/bonuses, those exact integers are pushed to the UI's "Karma Ledger", ensuring mathematical transparency.</p>
-          </div>
-
-          <div class="glass-card p-6 rounded-2xl">
-            <h5 class="text-lg font-bold text-white mb-2 flex items-center gap-2"><i data-lucide="bot" class="w-4 h-4 text-app-violet"></i> 4. Context-Aware RAG Chatbot</h5>
-            <p class="text-slate-400 text-sm leading-relaxed">
-              When the user opens the AI assistant, the application dynamically constructs a highly specific system prompt. It injects the product's name, brand, computed health score, the exact formula used to grade it, identified sugar aliases, harmful oils, and allergens. This ensures the LLM is tightly grounded in the factual data of the scanned product, preventing hallucinations and ensuring scientifically accurate dietary advice.
-            </p>
-          </div>
+        <div class="glass-card p-6 rounded-2xl border-l-2 border-app-cyan">
+          <h5 class="text-xl font-bold text-white mb-2 flex items-center gap-2"><i data-lucide="check-circle" class="w-5 h-5 text-app-cyan"></i> 4. Displaying the Result</h5>
+          <p class="text-slate-400 text-base leading-relaxed">
+            Finally, the app shows you a simple score from 1 to 100 on your screen. It also gives you an easy-to-read breakdown of exactly why the product got that score, so you know exactly what you are eating.
+          </p>
         </div>
       </div>
       
@@ -477,6 +507,34 @@
         modal.classList.add('hidden');
         document.body.style.overflow = ''; // Restore scrolling
       }, 300);
+    }
+
+    // Scroll Reveal Logic
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { root: null, rootMargin: '0px', threshold: 0.15 });
+    
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // Scroll to Top Logic
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 500) {
+        scrollToTopBtn.classList.remove('opacity-0', 'pointer-events-none');
+        scrollToTopBtn.classList.add('opacity-100', 'pointer-events-auto');
+      } else {
+        scrollToTopBtn.classList.add('opacity-0', 'pointer-events-none');
+        scrollToTopBtn.classList.remove('opacity-100', 'pointer-events-auto');
+      }
+    });
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   </script>
 </body>
